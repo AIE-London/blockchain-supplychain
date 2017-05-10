@@ -37,7 +37,7 @@ sudo docker-compose -f docker-compose.yml up -d
 Run the following to list the running docker containers
 
 ```bash
-docker ps
+sudo docker ps
 ```
 
 The output should look something like this:
