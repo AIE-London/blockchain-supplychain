@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Capgemini-AIE/blockchain-supplychain#readme",
   "dependencies": {
+    "config": "^1.26.1",
     "fabric-ca-client": "^1.0.0-alpha.1",
     "fabric-client": "^1.0.0-alpha.1"
   }
