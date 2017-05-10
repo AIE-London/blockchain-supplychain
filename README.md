@@ -1,7 +1,7 @@
 
 # Setup
 
-## Prerequsites
+## Prerequisites
 
 * Docker
 * Docker Compose
