@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/Capgemini-AIE/blockchain-supplychain/issues"
   },
-  "homepage": "https://github.com/Capgemini-AIE/blockchain-supplychain#readme"
+  "homepage": "https://github.com/Capgemini-AIE/blockchain-supplychain#readme",
+  "dependencies": {
+    "fabric-ca-client": "^1.0.0-alpha.1",
+    "fabric-client": "^1.0.0-alpha.1"
+  }
 }
