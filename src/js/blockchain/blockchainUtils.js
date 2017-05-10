@@ -4,6 +4,6 @@ var fabricCaClient = require('fabric-ca-client');
 var client = new fabricClient();
 var caClient = new fabricCaClient();
 
-var chain = client.newChain('supply');
+var chain = client.newChain('supply', client);
 
 // TODO some blockchainy stuff
