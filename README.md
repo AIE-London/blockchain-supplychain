@@ -2,6 +2,8 @@
 
 ## Prerequisites
 
+* Node 6.10.x
+* Npm - Any recent version should be fine
 * Docker
 * Docker Compose
 
