@@ -35,7 +35,7 @@ app.get('/', function (req, res) {
     }).then(response => {
         return response.json();
     }).then(json => {
-        res.send(JSON.stringify(json));
+        res.send(json);
     });
 });
 
