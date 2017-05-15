@@ -1,7 +1,7 @@
 {
   "name": "blockchain-supplychain",
   "version": "1.0.0",
-  "description": "* Node 6.10.x\r * Npm - Any recent version should be fine\r * Docker\r * Docker Compose",
+  "description": "## Prerequisites",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,11 +10,6 @@
     "type": "git",
     "url": "git+https://github.com/Capgemini-AIE/blockchain-supplychain.git"
   },
-  "keywords": [
-    "blockchain",
-    "hyperledger",
-    "node"
-  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -22,8 +17,8 @@
   },
   "homepage": "https://github.com/Capgemini-AIE/blockchain-supplychain#readme",
   "dependencies": {
-    "config": "^1.26.1",
-    "fabric-ca-client": "^1.0.0-alpha.1",
-    "fabric-client": "^1.0.0-alpha.1"
+    "express": "^4.15.2",
+    "hfc": "^0.6.5",
+    "node-fetch": "^1.6.3"
   }
 }
