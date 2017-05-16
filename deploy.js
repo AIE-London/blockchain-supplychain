@@ -20,4 +20,7 @@ blockchain.deploy(config.peers[0].endpoint,
     .then(result => {
         let newConfigData = Object.assign({}, result.file, {chaincodeHash: result.hash});
         return jsonfile.write(configLocation, newConfigData);
+    }).catch(error => {
+      console.error("[Blockchain-Deploy] Chaincode deployment failed with error:");
+      console.error(error);  
     });
