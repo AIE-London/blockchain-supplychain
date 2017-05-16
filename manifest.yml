@@ -1,0 +1,8 @@
+applications:
+- path: .
+  memory: 128M
+  instances: 1
+  domain: eu-gb.mybluemix.net
+  name: blockchain-supplychain
+  host: blockchain-supplychain
+  disk_quota: 256M

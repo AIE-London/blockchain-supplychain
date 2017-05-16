@@ -1,55 +1,39 @@
-# Setup
+# Blockchain-Supplychain
 
-## Prerequisites
+## Setup
 
-* Node 6.10.x
-* Npm - Any recent version should be fine
-* Docker
-* Docker Compose
+This node project contains chaincode and a node app for a supply-chain blockchain demo.
 
-We got it running on Ubuntu 14.04 Server, athought it is technically possible on any other OS (we would strongly advise against using windows).
+To get setup - just....
 
-## Download Docker Images
+Install node dependencies:
 
-We found that there images *acctually* worked, unlike some others... *cough couch IBM...*
-
-```bash
-sudo docker pull hyperledger/fabric-peer:x86_64-0.6.1-preview \
-  && sudo docker pull hyperledger/fabric-membersrvc:x86_64-0.6.1-preview \
-  && sudo docker pull yeasy/blockchain-explorer:latest \
-  && sudo docker tag hyperledger/fabric-peer:x86_64-0.6.1-preview hyperledger/fabric-peer \
-  && sudo docker tag hyperledger/fabric-peer:x86_64-0.6.1-preview hyperledger/fabric-baseimage \
-  && sudo docker tag hyperledger/fabric-membersrvc:x86_64-0.6.1-preview hyperledger/fabric-membersrvc
+```
+  npm install
 ```
 
-## Run the hyperledger fabric
+Add the array of peers to config.json - in the following format
 
-```bash
-sudo docker-compose -f docker-compose.yml up
+```
+{
+ "peers": [{"user": "username_to_connect_with", "endpoint": "host.app.com:5004"}]
+}
 ```
 
-This will keep to attached to he logstream from the relevant containers that are spun up. In order to spin up the fabric in a detached state run the following
+## Usage
 
-```bash
-sudo docker-compose -f docker-compose.yml up -d
+Deploy your chaincode to your peers
+
+```
+npm run deploy
 ```
 
-## Check the containers
+Start server to query chaincode
 
-Run the following to list the running docker containers
-
-```bash
-sudo docker ps
+```
+npm start
 ```
 
-The output should look something like this:
+## Querying
 
-```bash
-CONTAINER ID        IMAGE                        COMMAND                  CREATED             STATUS              PORTS                                             NAMES
-ce4d1be53ea1        hyperledger/fabric-peer      "bash -c 'while tr..."   34 seconds ago      Up 34 seconds       7050-7059/tcp                                     fabric-cli
-a13248528450        hyperledger/fabric-peer      "peer node start -..."   34 seconds ago      Up 34 seconds       7050/tcp, 7052-7059/tcp, 0.0.0.0:7051->7051/tcp   fabric-peer0
-f268fec6db0b        hyperledger/fabric-orderer   "orderer"                35 seconds ago      Up 34 seconds       0.0.0.0:7050->7050/tcp                            fabric-orderer0
-547515df9394        hyperledger/fabric-ca        "fabric-ca-server ..."   35 seconds ago      Up 34 seconds       7054/tcp, 0.0.0.0:8888->8888/tcp                  fabric-ca
-```
-
-As you can see we've successfuly setup a network consiting of one peer, one orderer and a ca. As well as a cli to interact with it if we wish.
+A GET request to localhost:3000/ will query the chaincode using the details in config.json
