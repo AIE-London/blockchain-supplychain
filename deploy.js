@@ -6,7 +6,7 @@ const configLocation = './config.json';
 const config = require(configLocation);
 
 blockchain.deploy(config.peers[0].endpoint,
-    "https://github.com/IBM-Blockchain/learn-chaincode/finished",
+    "https://github.com/Capgemini-AIE/blockchain-supplychain/chaincode",
     config.peers[0].user,
     ["hi there"])
     
