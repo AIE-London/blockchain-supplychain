@@ -1,22 +1,36 @@
 package main
 
 //==============================================================================================================================
-//	Organisation - Defines the structure for a organisation object.
+//	Order - Defines the structure for an order object.
 //==============================================================================================================================
 type Order struct {
     Id		            string		`json:"id"`
-    Recipient		    string		`json:"recipient"`
-    Address		        string	    `json:"address"`
-    SourceWarehouse     string      `json:"sourceWarehouse"`
-    DeliveryCompany     string      `json:"deliveryCompany"`
+    Source  		    Source		`json:"source"`
+    Destination	        Destination	`json:"destination"`
+    Transport           Transport   `json:"transport"`
     Items               []Item      `json:"items"`
-    PickStatus          string      `json:"pickStatus"`
-    DeliveryStatus      string      `json:"deliveryStatus"`
 }
 
 type Orders struct {
     Orders		        []Order		`json:"orders"`
 }
+
+type Source struct {
+    Type                string      `json:"type"`
+    Location            string      `json:"location"`
+    Status              string      `json:"status"`
+}
+
+type Destination struct {
+    Recipient           string      `json:"recipient"`
+    Address             string      `json:"address"`
+}
+
+type Transport struct {
+    Company             string      `json:"company"`
+    Status              string      `json:"status"`
+}
+
 const PICK_STATUS_PENDING = "PENDING"
 const PICK_STATUS_PICKED = "PICKED"
 const PICK_STATUS_PARTIALLY_PICKED = "PARTIALLY_PICKED"
@@ -29,17 +43,15 @@ const DELIVERY_STATUS_FAILURE = "FAILURE"
 const DELIVERY_STATUS_REJECTED = "REJECTED"
 
 
-func NewOrder(id string, recipient string, address string, sourceWarehouse string, deliveryCompany string, items Items) (Order){
+func NewOrder(id string, recipient string, address string, sourceLocation string, deliveryCompany string, items Items) (Order){
     var order Order
 
     order.Id = id
-    order.Recipient = recipient
-    order.Address = address
-    order.SourceWarehouse = sourceWarehouse
-    order.DeliveryCompany = deliveryCompany
+    //Hard code to warehouse source for now
+    order.Source = Source{"WAREHOUSE", sourceLocation, PICK_STATUS_PENDING}
+    order.Destination = Destination{recipient, address}
+    order.Transport = Transport{deliveryCompany, DELIVERY_STATUS_AWAITING_PICKUP}
     order.Items = items.Items
-    order.PickStatus = PICK_STATUS_PENDING
-    order.DeliveryStatus = DELIVERY_STATUS_AWAITING_PICKUP
 
     return order
 }
