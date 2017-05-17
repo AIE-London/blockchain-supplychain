@@ -19,7 +19,6 @@
             "type": "object"
         },
         "items": {
-            "additionalItems": false,
             "items": {
                 "additionalProperties": false,
                 "properties": {
