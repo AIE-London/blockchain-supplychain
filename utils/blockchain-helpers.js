@@ -23,7 +23,16 @@ let deployChaincode = (peerEndpoint, chaincodePath, username, args) => {
             "Content-Type": "application/json"
         }
     })
-    .then(response => response.json())
+    .then(response => response.json().then(json => ({
+        json,
+        status: response.status
+    })))
+    .then(response => {
+        if (response.status !== 200) {
+            throw new Error("Response was not 200, has message : " + JSON.stringify(response.json));
+        }
+        return response.json;
+    })
     .then(jsonResponse => jsonResponse.result.message);
 }
 
