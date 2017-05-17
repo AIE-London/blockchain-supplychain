@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Capgemini-AIE/blockchain-supplychain#readme",
   "dependencies": {
+    "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "jsonfile": "^3.0.0",
     "node-fetch": "^1.6.3"
