@@ -2,20 +2,54 @@ let express = require('express');
 const bodyParser = require('body-parser');
 let app = express();
 
+/*
+    Grab config
+*/
+const config = require('./config.json');
+const swaggerDefinition =  require('./swaggerConfig.json');
+
+/*
+    Import utilities
+*/
+const blockchain = require('./utils/blockchain-helpers.js');
+const schema = require('./utils/schema-helpers.js');
+
 /**
  * JSON Schema Validation
  */
 const validate = require('express-jsonschema').validate;
-
-// Define schemas object
 let schemas = {};
 schemas.orderCreateSchema = require("./schemas/orderCreateSchema.json");
 
-const blockchain = require('./utils/blockchain-helpers.js');
-const config = require('./config.json');
+/**
+ * Swagger Configuration
+ */
 
+// Import SwaggerJSDoc
+let swaggerJSDoc = require('swagger-jsdoc');
+
+
+// Options for the swagger docs
+let options = {
+  swaggerDefinition: swaggerDefinition,
+  apis: ['app.js'] // Self documenting within code
+};
+
+// Initialize Swagger-jsdoc
+let swaggerSpec = swaggerJSDoc(options);
+
+// Setup swagger schemas
+// Re-use validation-schemas for swagger, but delete unneeded attributes
+swaggerSpec.definitions = schema.swaggerise(swaggerSpec.definitions, require("./schemas/orderCreateSchema.json"), "orderCreateSchema");
+
+/*
+    Define constants
+*/
 const port = process.env.PORT || 8080;
 
+/*
+    Setup Express Middleware
+*/
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
@@ -27,6 +61,53 @@ app.get('/', function (req, res) {
         });
 });
 
+
+
+/**
+ * @swagger
+ * /swagger.json :
+ *   get:
+ *     tags:
+ *       - SupplychainBlockchain
+ *     description: Returns swagger documentation
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful response
+ */
+app.get('/swagger.json', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
+
+
+
+/**
+ * @swagger
+ * /order :
+ *   post:
+ *     tags:
+ *       - SupplychainBlockchain
+ *     description: Creates a new order on the blockchain as according to the body of the request
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: Body
+ *         description: The JSON body of the request
+ *         in: body
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/orderCreateSchema'
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *       400:
+ *         description: Failed schema validation
+ *       503:
+ *         description: Error invoking chaincode
+ */
 app.post('/order', validate({ body : schemas.orderCreateSchema }), function (req, res) {
     console.log("[HTTP] Request inbound: POST /order");
     let order = req.body;
@@ -46,6 +127,7 @@ app.post('/order', validate({ body : schemas.orderCreateSchema }), function (req
         })
         .catch(error => {
             console.log(error);
+            res.status(503);
             res.send({ error: error.message });
         });
 });

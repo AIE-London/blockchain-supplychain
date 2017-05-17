@@ -1,0 +1,9 @@
+{
+  "info": {
+    "title": "Blockchain Supplychain API",
+    "version": "1.0.0",
+    "description": "An API exposing query and invoke functionality on our Blockchain instance for our Blockchain in Supplychain project"
+  },
+  "host": "blockchain-supplychain.eu-gb.mybluemix.net",
+  "basePath": "/"
+}
