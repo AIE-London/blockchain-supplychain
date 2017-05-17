@@ -28,7 +28,6 @@ app.get('/', function (req, res) {
 });
 
 app.post('/order', validate({ body : schemas.orderCreateSchema }), function (req, res) {
-    // [TODO] Schema validate
     console.log("[HTTP] Request inbound: POST /order");
     let order = req.body;
 
