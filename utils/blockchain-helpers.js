@@ -23,17 +23,17 @@ let deployChaincode = (peerEndpoint, chaincodePath, username, args) => {
             "Content-Type": "application/json"
         }
     })
-    .then(response => response.json().then(json => ({
-        json,
-        status: response.status
-    })))
-    .then(response => {
-        if (response.status !== 200) {
-            throw new Error("Response was not 200, has message : " + JSON.stringify(response.json));
-        }
-        return response.json;
-    })
-    .then(jsonResponse => jsonResponse.result.message);
+        .then(response => response.json().then(json => ({
+            json,
+            status: response.status
+        })))
+        .then(response => {
+            if (response.status !== 200) {
+                throw new Error("Response was not 200, has message : " + JSON.stringify(response.json));
+            }
+            return response.json;
+        })
+        .then(jsonResponse => jsonResponse.result.message);
 }
 
 let queryChaincode = (peerEndpoint, chaincodeHash, username, functionName, functionArgs) => {
@@ -59,7 +59,7 @@ let queryChaincode = (peerEndpoint, chaincodeHash, username, functionName, funct
             "Content-Type": "application/json"
         }
     })
-    .then(response => response.json());
+        .then(response => response.json());
 }
 
 
@@ -72,11 +72,11 @@ let invokeChaincode = (peerEndpoint, chaincodeHash, username, functionName, func
             "params": {
                 "type": 1,
                 "chaincodeID": {
-                "name": chaincodeHash
+                    "name": chaincodeHash
                 },
                 "ctorMsg": {
-                "function": functionName,
-                "args": functionArgs
+                    "function": functionName,
+                    "args": functionArgs
                 },
                 "secureContext": username
             },
@@ -86,7 +86,7 @@ let invokeChaincode = (peerEndpoint, chaincodeHash, username, functionName, func
             "Content-Type": "application/json"
         }
     })
-    .then(response => response.json());
+        .then(response => response.json());
 }
 
 
