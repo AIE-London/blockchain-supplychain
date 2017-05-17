@@ -2,6 +2,15 @@ let express = require('express');
 const bodyParser = require('body-parser');
 let app = express();
 
+/**
+ * JSON Schema Validation
+ */
+const validate = require('express-jsonschema').validate;
+
+// Define schemas object
+let schemas = {};
+schemas.orderCreateSchema = require("./schemas/orderCreateSchema.json");
+
 const blockchain = require('./utils/blockchain-helpers.js');
 const config = require('./config.json');
 
@@ -18,7 +27,7 @@ app.get('/', function (req, res) {
         });
 });
 
-app.post('/order', function (req, res) {
+app.post('/order', validate({ body : schemas.orderCreateSchema }), function (req, res) {
     // [TODO] Schema validate
     console.log("[HTTP] Request inbound: POST /order");
     let order = req.body;
@@ -40,6 +49,28 @@ app.post('/order', function (req, res) {
             console.log(error);
             res.send({ error: error.message });
         });
+});
+
+
+// Express Error Handling for Validation
+app.use((err, req, res, next) => {
+  let responseData;
+
+  if (err.name === 'JsonSchemaValidation') {
+
+    console.log("[HTTP] Request JSON schema validation failed.");
+
+    res.status(400);
+
+    responseData = {
+        "error": "Bad Request",
+        "validationErrors": err.validations
+    };
+
+    res.json(responseData);
+  } else {
+    next(err);
+  }
 });
 
 app.listen(port);
