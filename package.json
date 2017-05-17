@@ -23,6 +23,7 @@
     "express": "^4.15.2",
     "express-jsonschema": "^1.1.6",
     "jsonfile": "^3.0.0",
-    "node-fetch": "^1.6.3"
+    "node-fetch": "^1.6.3",
+    "swagger-jsdoc": "^1.9.4"
   }
 }
