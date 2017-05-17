@@ -38,6 +38,8 @@ func (t *SupplychainChaincode) Invoke(stub shim.ChaincodeStubInterface, function
         return t.Init(stub, "init", args)
     } else if function == "addOrder" {
         return t.processAddOrder(stub, callerDetails, args)
+    } else if function == "updateOrderStatus" {
+        return t.processUpdateOrderStatus(stub, callerDetails, args)
     }
     fmt.Println("invoke did not find func: " + function)
 
@@ -84,6 +86,24 @@ func (t *SupplychainChaincode) processAddOrder(stub shim.ChaincodeStubInterface,
     order := NewOrder(stub.GetTxID(), args[0], args[1], args[2], args[3], items)
 
     return nil, AddOrder(stub, callerDetails, order)
+}
+
+//=================================================================================================================================
+//	 processAddOrder - Processes an addOrganistion request.
+//          args -  orderId,
+//                  statusType,
+//                  statusValue,
+//                  comment
+//=================================================================================================================================
+func (t *SupplychainChaincode) processUpdateOrderStatus(stub shim.ChaincodeStubInterface, callerDetails CallerDetails, args[]string) ([]byte, error) {
+
+    fmt.Println("running processUpdateOrderStatus)")
+
+    if len(args) != 5 {
+        return nil, errors.New("Incorrect number of arguments. Expecting (OrderId, StatusType, StatusValue, Comment)")
+    }
+
+    return nil, UpdateOrderStatus(stub, callerDetails, args[0], args[1], args[2], args[3])
 }
 
 //=================================================================================================================================

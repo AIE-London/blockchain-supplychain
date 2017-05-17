@@ -7,6 +7,10 @@ import (
 
 const ALL_ORDER_IDS_KEY = "ORDERS"
 
+const STATUS_TYPE_SOURCE = "SOURCE"
+
+const STATUS_TYPE_TRANSPORT = "TRANSPORT"
+
 //==============================================================================================================================
 //	 Invocations
 //==============================================================================================================================
@@ -22,6 +26,25 @@ func AddOrder(stub shim.ChaincodeStubInterface, callerDetails CallerDetails, ord
     return addOrderIdToHolder(stub, order.Id)
 }
 
+func UpdateOrderStatus(stub shim.ChaincodeStubInterface, callerDetails CallerDetails, orderId string, statusType string, statusValue string, comment string) (error) {
+    //TODO Validate order
+    //TODO permissions
+
+    order, err := RetrieveOrder(stub, orderId)
+
+    if err != nil { return LogAndError(err.Error()) }
+
+    if statusType == STATUS_TYPE_SOURCE {
+        order.Source.Status = statusValue
+    } else if statusType == STATUS_TYPE_TRANSPORT {
+        order.Transport.Status = statusValue
+    }
+
+    //Add to state
+    _, err = SaveOrder(stub, order)
+
+    return err
+}
 //==============================================================================================================================
 //	 Queries
 //==============================================================================================================================
