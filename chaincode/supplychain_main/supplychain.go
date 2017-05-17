@@ -125,7 +125,8 @@ func (t *SupplychainChaincode) processGetAllOrders(stub shim.ChaincodeStubInterf
 
     orders, err := GetAllOrders(stub, callerDetails)
 
-    if err != nil { return nil, LogAndError("Error when retrieving orders")}
+    //Probably no orders, return empty orders
+    if err != nil { orders = Orders{[]Order{}} }
 
     return marshall(orders)
 }
