@@ -51,6 +51,7 @@ let queryChaincode = (peerEndpoint, chaincodeHash, username, functionName, funct
                     "function": functionName,
                     "args": functionArgs
                 },
+                "attributes": ["username","role"],
                 "secureContext": username
             },
             "id": 0
@@ -78,6 +79,7 @@ let invokeChaincode = (peerEndpoint, chaincodeHash, username, functionName, func
                 "function": functionName,
                 "args": functionArgs
                 },
+                "attributes": ["username","role"],
                 "secureContext": username
             },
             "id": 0
