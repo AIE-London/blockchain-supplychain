@@ -83,6 +83,36 @@ app.get('/swagger.json', function(req, res) {
 
 
 
+/**
+ * @swagger
+ * /orders :
+ *   get:
+ *     tags:
+ *       - SupplychainBlockchain
+ *     description: Returns all orders present on the blockchain
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful order retrieval 
+ *       503:
+ *         description: Error querying chaincode
+ */
+app.get('/orders', function (req, res) {
+    console.log("[HTTP] Request inbound: GET /orders");
+    console.log("[QUERY] Querying getAllOrders on chaincode");
+    blockchain.query(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "getAllOrders", [])
+        .then(json => {
+            console.log("[QUERY] Completed successfully");
+            res.send(json)
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(503);
+            res.send({ error: error.message });
+        });
+});
+
 
 /**
  * @swagger
