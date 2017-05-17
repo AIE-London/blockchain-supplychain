@@ -4,14 +4,11 @@
     "properties": {
         "destination": {
             "additionalProperties": false,
-            "id": "/properties/destination",
             "properties": {
                 "address": {
-                    "id": "/properties/destination/properties/address",
                     "type": "string"
                 },
                 "recipient": {
-                    "id": "/properties/destination/properties/recipient",
                     "type": "string"
                 }
             },
@@ -23,17 +20,13 @@
         },
         "items": {
             "additionalItems": false,
-            "id": "/properties/items",
             "items": {
                 "additionalProperties": false,
-                "id": "/properties/items/items",
                 "properties": {
                     "code": {
-                        "id": "/properties/items/items/properties/code",
                         "type": "string"
                     },
                     "description": {
-                        "id": "/properties/items/items/properties/description",
                         "type": "string"
                     }
                 },
@@ -48,14 +41,11 @@
         },
         "source": {
             "additionalProperties": false,
-            "id": "/properties/source",
             "properties": {
                 "location": {
-                    "id": "/properties/source/properties/location",
                     "type": "string"
                 },
                 "type": {
-                    "id": "/properties/source/properties/type",
                     "type": "string"
                 }
             },
@@ -67,10 +57,8 @@
         },
         "transport": {
             "additionalProperties": false,
-            "id": "/properties/transport",
             "properties": {
                 "company": {
-                    "id": "/properties/transport/properties/company",
                     "type": "string"
                 }
             },
