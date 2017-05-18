@@ -7,6 +7,10 @@ import (
 
 const ALL_ORDER_IDS_KEY = "ORDERS"
 
+const STATUS_TYPE_SOURCE = "SOURCE"
+
+const STATUS_TYPE_TRANSPORT = "TRANSPORT"
+
 //==============================================================================================================================
 //	 Invocations
 //==============================================================================================================================
@@ -19,9 +23,48 @@ func AddOrder(stub shim.ChaincodeStubInterface, callerDetails CallerDetails, ord
     _, err := SaveOrder(stub, order)
     if err != nil { return err }
 
-    return addOrderIdToHolder(stub, order.Id)
+    err = addOrderIdToHolder(stub, order.Id)
+    if err != nil { return LogAndError(err.Error()) }
+
+    //Add blank order history
+    orderHistory := OrderHistory{[]OrderUpdate{}}
+    _, err = SaveOrderHistory(stub, ORDER_HISTORY_KEY_PREFIX + order.Id, orderHistory)
+
+    return err
 }
 
+func UpdateOrderStatus(stub shim.ChaincodeStubInterface, callerDetails CallerDetails, orderId string, statusType string, statusValue string, comment string) (error) {
+    //TODO Validate update (define state progression)
+    //TODO permissions
+    order, err := RetrieveOrder(stub, orderId)
+
+    if err != nil { return LogAndError(err.Error()) }
+
+    //TODO make this more extendable
+    fromValue := ""
+    updateType := ""
+    if statusType == STATUS_TYPE_SOURCE {
+        updateType = UPDATE_TYPE_SOURCE_STATUS
+        fromValue = order.Source.Status
+        order.Source.Status = statusValue
+    } else if statusType == STATUS_TYPE_TRANSPORT {
+        updateType = UPDATE_TYPE_TRANSPORT_STATUS
+        fromValue = order.Transport.Status
+        order.Transport.Status = statusValue
+    }
+
+    //Add to state
+    _, err = SaveOrder(stub, order)
+    if err != nil { return LogAndError(err.Error()) }
+
+    timestamp, err := stub.GetTxTimestamp()
+    if err != nil { return LogAndError(err.Error()) }
+
+    //Update history
+    orderUpdate := NewOrderUpdate(updateType, fromValue, statusValue, comment, callerDetails.Username, timestamp.String())
+
+    return UpdateOrderHistory(stub, orderId, orderUpdate)
+}
 //==============================================================================================================================
 //	 Queries
 //==============================================================================================================================
