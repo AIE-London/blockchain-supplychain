@@ -21,3 +21,16 @@ func UpdateOrderHistory(stub shim.ChaincodeStubInterface, orderId string, update
     return err
 }
 
+//==============================================================================================================================
+//	 Queries
+//==============================================================================================================================
+
+func GetOrderHistory(stub shim.ChaincodeStubInterface, callerDetails CallerDetails, orderId string) (OrderHistory, bool, error) {
+
+    //TODO Has permission to retrieve?
+
+    orderHistory, err := RetrieveOrderHistory(stub, ORDER_HISTORY_KEY_PREFIX + orderId)
+
+    return orderHistory, false, err
+}
+

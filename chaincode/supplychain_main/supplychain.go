@@ -56,6 +56,8 @@ func (t *SupplychainChaincode) Query(stub shim.ChaincodeStubInterface, function 
         return t.processGetOrder(stub, callerDetails, args)
     } else if function == "getAllOrders" {
         return t.processGetAllOrders(stub, callerDetails, args)
+    } else if function == "getOrderHistory" {
+        return t.processGetOrderHistory(stub, callerDetails, args)
     }
 
     fmt.Println("query did not find func: " + function)
@@ -152,4 +154,29 @@ func (t *SupplychainChaincode) processGetAllOrders(stub shim.ChaincodeStubInterf
     if err != nil { orders = Orders{[]Order{}} }
 
     return marshall(orders)
+}
+
+//=================================================================================================================================
+//	 processGetOrderHistory - Processes a getOrderHistory request.
+//          args -  orderId
+//=================================================================================================================================
+func (t *SupplychainChaincode) processGetOrderHistory(stub shim.ChaincodeStubInterface, callerDetails CallerDetails, args[]string) ([]byte, error) {
+
+    fmt.Println("running processGetOrderHistory()")
+
+    if len(args) != 1 {
+        return nil, errors.New("Incorrect number of arguments. Expecting (OrderId)")
+    }
+
+    orderHistory, accessDenied, err := GetOrderHistory(stub, callerDetails, args[0])
+
+    if accessDenied {
+        return ACCESS_DENIED_RESPONSE, nil
+    }
+
+    if err != nil {
+        return NOT_FOUND_RESPONSE, nil
+    }
+
+    return marshall(orderHistory)
 }
