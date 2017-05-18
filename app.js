@@ -102,6 +102,42 @@ app.get('/orders', function (req, res) {
         });
 });
 
+/**
+ * @swagger
+ * /order/{orderId} :
+ *   get:
+ *     tags:
+ *       - SupplychainBlockchain
+ *     description: Returns all orders present on the blockchain
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: orderId
+ *         description: The order ID you wish to retrieve details for
+ *         in: path
+ *         type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Successful order retrieval 
+ *       503:
+ *         description: Error querying chaincode
+ */
+app.get('/order/:id', function (req, res) {
+    console.log("[HTTP] Request inbound: GET /order/" + req.params.id);
+    console.log("[QUERY] Querying getOrder on chaincode");
+    blockchain.query(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "getOrder", [req.params.id])
+        .then(json => {
+            console.log("[QUERY] Completed successfully");
+            res.send(JSON.parse(json.result.message));
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(503);
+            res.send({ error: error.message });
+        });
+});
+
 
 /**
  * @swagger
