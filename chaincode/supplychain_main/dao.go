@@ -65,6 +65,10 @@ func RetrieveIdsHolder(stub shim.ChaincodeStubInterface, id string) (IdsHolder, 
     return idsHolder, err
 }
 
+func ClearData(stub shim.ChaincodeStubInterface) (error) {
+    return invoke(stub, getCrudChaincodeId(stub), "init", []string{})
+}
+
 func retrieve(stub shim.ChaincodeStubInterface, id string) ([]byte, error) {
     return query(stub, getCrudChaincodeId(stub), RETRIEVE_FUNCTION, []string{id})
 }

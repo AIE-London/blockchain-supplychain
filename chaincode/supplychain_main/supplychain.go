@@ -36,6 +36,8 @@ func (t *SupplychainChaincode) Invoke(stub shim.ChaincodeStubInterface, function
     // Handle different functions
     if function == "init" {
         return t.Init(stub, "init", args)
+    } else if function == "clearData" {
+        return t.processClearData(stub, callerDetails, args)
     } else if function == "addOrder" {
         return t.processAddOrder(stub, callerDetails, args)
     } else if function == "updateOrderStatus" {
@@ -108,6 +110,22 @@ func (t *SupplychainChaincode) processUpdateOrderStatus(stub shim.ChaincodeStubI
     err := UpdateOrderStatus(stub, callerDetails, args[0], args[1], args[2], args[3])
 
     return nil, err
+
+}
+
+//=================================================================================================================================
+//	 processClearData - Processes an clearData request.
+//          args -  NONE
+//=================================================================================================================================
+func (t *SupplychainChaincode) processClearData(stub shim.ChaincodeStubInterface, callerDetails CallerDetails, args[]string) ([]byte, error) {
+
+    fmt.Println("running processUpdateOrderStatus)")
+
+    if len(args) != 0 {
+        return nil, errors.New("Incorrect number of arguments. Expecting (NONE)")
+    }
+
+    return nil, ClearData(stub)
 
 }
 
