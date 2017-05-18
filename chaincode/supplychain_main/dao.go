@@ -23,6 +23,20 @@ func InitDao(stub shim.ChaincodeStubInterface, crudChaincodeId string) {
     stub.PutState(CRUD_CHAINCODE_ID_KEY, []byte(crudChaincodeId))
 }
 
+func SaveOrderHistory(stub shim.ChaincodeStubInterface, id string, orderHistory OrderHistory) (OrderHistory, error) {
+    err := saveObject(stub, id, orderHistory)
+
+    return orderHistory, err
+}
+
+func RetrieveOrderHistory(stub shim.ChaincodeStubInterface, id string) (OrderHistory, error){
+    var orderHistory OrderHistory
+
+    err := retrieveObject(stub, id, &orderHistory)
+
+    return orderHistory, err
+}
+
 func SaveOrder(stub shim.ChaincodeStubInterface, order Order) (Order, error) {
     err := saveObject(stub, order.Id, order)
 

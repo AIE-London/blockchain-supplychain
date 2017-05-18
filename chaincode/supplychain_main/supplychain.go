@@ -99,11 +99,14 @@ func (t *SupplychainChaincode) processUpdateOrderStatus(stub shim.ChaincodeStubI
 
     fmt.Println("running processUpdateOrderStatus)")
 
-    if len(args) != 5 {
+    if len(args) != 4 {
         return nil, errors.New("Incorrect number of arguments. Expecting (OrderId, StatusType, StatusValue, Comment)")
     }
 
-    return nil, UpdateOrderStatus(stub, callerDetails, args[0], args[1], args[2], args[3])
+    err := UpdateOrderStatus(stub, callerDetails, args[0], args[1], args[2], args[3])
+
+    return nil, err
+
 }
 
 //=================================================================================================================================
