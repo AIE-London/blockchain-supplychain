@@ -52,16 +52,6 @@ const port = process.env.PORT || 8080;
 */
 app.use(bodyParser.json());
 
-app.get('/', function (req, res) {
-    blockchain.query(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "read", ["hello_world"])
-        .then(json => res.send(json))
-        .catch(error => {
-            console.log(error);
-            res.send({ error: error.message });
-        });
-});
-
-
 
 /**
  * @swagger
@@ -80,7 +70,6 @@ app.get('/swagger.json', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
 });
-
 
 
 /**
@@ -104,7 +93,7 @@ app.get('/orders', function (req, res) {
     blockchain.query(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "getAllOrders", [])
         .then(json => {
             console.log("[QUERY] Completed successfully");
-            res.send(json)
+            res.send(JSON.parse(json.result.message).orders);
         })
         .catch(error => {
             console.log(error);
