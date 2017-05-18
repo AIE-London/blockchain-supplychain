@@ -13,6 +13,7 @@ const swaggerDefinition =  require('./swaggerConfig.json');
 */
 const blockchain = require('./utils/blockchain-helpers.js');
 const schema = require('./utils/schema-helpers.js');
+const expressMiddleware = require('./utils/express-middleware.js');
 
 /**
  * JSON Schema Validation
@@ -51,6 +52,7 @@ const port = process.env.PORT || 8080;
     Setup Express Middleware
 */
 app.use(bodyParser.json());
+app.use(expressMiddleware.allowedOrigins);
 
 
 /**
