@@ -1,6 +1,7 @@
 let express = require('express');
 const bodyParser = require('body-parser');
 let app = express();
+let serveStatic = require('serve-static');
 
 /*
     Grab config
@@ -68,11 +69,13 @@ const stateDescriptions = {
 }
 const sourceStates = ["CREATED", "PENDING", "PICKED", "PARTIALLY_PICKED", "READY_FOR_TRANSIT"];
 const transportStates = ["AWAITING_PICKUP", "ENROUTE", "DELAYED", "CANCELLED", "DELIVERED", "PARTIALLY_DELIVERED", "DELIVERY_CONFIRMED", "FAILURE", "REJECTED"];
+const root = `${__dirname}/public`;
 
 /*
     Setup Express Middleware
 */
 app.use(bodyParser.json());
+app.use(serveStatic(root));
 app.use(expressMiddleware.allowedOrigins);
 
 app.get('/swagger.json', function (req, res) {

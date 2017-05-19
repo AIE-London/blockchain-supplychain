@@ -1,0 +1,26 @@
+
+<script>
+  let ApiMixin = parent => class extends parent {
+    _getStates() {
+      return fetch("/states")
+        .then(response => response.json())
+    }
+    _getOrder(orderId) {
+      return fetch("/order/" + orderId)
+        .then(response => response.json())
+    }
+    _updateOrderStatus(orderId, to, comment) {
+      return fetch("/order/" + orderId, {
+        method: "PUT",
+        body: JSON.stringify({
+          to,
+          comment
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(() => getOrder(orderId))
+    }
+  }
+</script>

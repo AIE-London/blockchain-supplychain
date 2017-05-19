@@ -26,6 +26,7 @@
     "jsonfile": "^3.0.0",
     "moment": "^2.18.1",
     "node-fetch": "^1.6.3",
+    "serve-static": "^1.12.3",
     "swagger-jsdoc": "^1.9.4"
   }
 }

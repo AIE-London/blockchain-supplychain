@@ -1,0 +1,61 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../order-stages/order-stages.html">
+
+<dom-module id="order-view">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+      paper-card {
+        width: 90%;
+        max-width: 950px;
+        color: #000;
+      }
+      paper-button {
+        background: #03A9F4;
+      }
+    </style>
+    <paper-card heading="Order: [[order.id]]">
+      <order-stages stages="[[_selectedStages]]"
+        order="[[order]]"></order-stages>
+      <section class="card-content">
+        <h2>Next Step:</h2>
+        <paper-button>Mark Delivered</paper-button>
+      </section>
+    </paper-card>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class OrderView extends Polymer.Element {
+      static get is() { return 'order-view'; }
+      static get properties() {
+        return {
+          states: {
+            type: Array,
+            value: []
+          },
+          _selectedStages: {
+            type: Array,
+            value: ["AWAITING_PICKUP", "ENROUTE", "DELIVERED", "DELIVERY_CONFIRMED"]
+          },
+          order: {
+            type: Object,
+            value: {}
+          }
+        };
+      }
+    }
+
+    window.customElements.define(OrderView.is, OrderView);
+  </script>
+</dom-module>

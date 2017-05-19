@@ -1,0 +1,92 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="order-stages">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: no-wrap;
+      }
+      div {
+        background-color: #FFF;
+        padding: 18px;
+        color: #222;
+        flex-grow: 1;
+        text-align: center;
+        position: relative;
+      }
+      .active {
+        background-color: #37b24d;
+        color: #FFF;
+      }
+      .current::after {
+        content: '';
+        position: absolute;
+        border-style: solid;
+        border-width: 30px 0 31px 30px;
+        border-color: transparent #37b24d;
+        display: block;
+        width: 0;
+        z-index: 1;
+        right: -30px;
+        top: 0;
+      }
+      @media (max-width: 750px) {
+        :host {
+          flex-wrap: wrap;
+        }
+        div {
+          width: 100%;
+          overflow: hidden;
+        }
+      } 
+    </style>
+    <template is="dom-repeat" items="[[stages]]" as="stage">
+      <div class$="[[_isActive(order, stage)]]">
+        [[stage]]
+      </div>
+    </template>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class OrderStages extends Polymer.Element {
+      static get is() { return 'order-stages'; }
+      static get properties() {
+        return {
+          stages: {
+            type: Array,
+            value: []
+          },
+          order: {
+            type: Object,
+            value: {}
+          }
+        };
+      }
+      _isActive(order, stage) {
+        try {
+          if (this.stages.indexOf(order.transport.status) > this.stages.indexOf(stage)) {
+            return 'active';
+          } else if (this.stages.indexOf(order.transport.status) === this.stages.indexOf(stage)) {
+            return 'active current';
+          } else {
+            return '';
+          }
+        } catch(error) {
+          return '';
+        }
+      }
+    }
+    window.customElements.define(OrderStages.is, OrderStages);
+  </script>
+</dom-module>
