@@ -1,0 +1,46 @@
+<script type="text/javascript" src="./instascan.min.js"></script>
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="qr-reader">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      video {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <video id="preview"></video>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class QRReader extends Polymer.Element {
+      static get is() { return 'qr-reader'; }
+      ready() {
+        super.ready();
+        let video = this.$.preview;
+        let scanner = new Instascan.Scanner({ video:  video});
+        scanner.addListener('scan', content => {
+          this.dispatchEvent(new CustomEvent('qrfound', {detail: {content: content}}));
+        });
+        Instascan.Camera.getCameras().then(cameras => {
+          if (cameras.length > 0) {
+            scanner.start(cameras[0]);
+          } else {
+            console.error('No cameras found.');
+          }
+        }).catch(e => {
+          console.error(e);
+        });
+      }
+    }
+
+    window.customElements.define(QRReader.is, QRReader);
+  </script>
+</dom-module>

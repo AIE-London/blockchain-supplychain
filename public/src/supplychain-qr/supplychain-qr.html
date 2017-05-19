@@ -1,0 +1,77 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../qr-reader/qr-reader.html">
+<link rel="import" href="../order-view/order-view.html">
+<link rel="import" href="../mixins/blockchainApiMixin.html">
+
+<dom-module id="supplychain-qr">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      qr-reader {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <template is="dom-if" if="{{!currentId}}">
+      <qr-reader on-qrfound="_qrFound"></qr-reader>
+    </template>
+    <template is="dom-if" if="{{currentId}}">
+      <order-view
+        on-advance="_orderAdvanced"
+        on-back="_reset"
+        order="[[_order]]"
+        states="[[_states]]">
+    </template>
+
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class SupplychainQr extends ApiMixin(Polymer.Element) {
+      static get is() { return 'supplychain-qr'; }
+      _qrFound(event) {
+        this.currentId = event.detail.content;
+        this._fetchOrder();
+      }
+      _fetchOrder() {
+        this._getOrder(this.currentId)
+          .then(order => {
+            this._order = order;
+          });
+      }
+      _reset() {
+        this.currentId = null;
+      }
+      _orderAdvanced(event) {
+        this._updateOrderStatus(this.currentId, event.detail.state, "")
+          .then(this.fetchOrder);
+      }
+      static get properties() {
+        return {
+          currentId: {
+            type: String,
+            value: null
+          }
+        };
+      }
+      ready() {
+        super.ready();
+        this._getStates()
+          .then(states => this._states = states)
+          .then(() => console.log(this._states));
+        this._fetchOrder();
+      }
+    }
+
+    window.customElements.define(SupplychainQr.is, SupplychainQr);
+  </script>
+</dom-module>

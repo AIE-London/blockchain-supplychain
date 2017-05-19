@@ -1,0 +1,7 @@
+{
+  "name": "Supplychain QR",
+  "short_name": "Supplychain QR",
+  "description": "An application allowing delivery process acknowledgement via a QR code",
+  "start_url": "/",
+  "display": "standalone"
+}

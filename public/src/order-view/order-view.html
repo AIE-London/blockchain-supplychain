@@ -1,0 +1,116 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../order-stages/order-stages.html">
+
+<dom-module id="order-view">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
+      paper-card {
+        width: 90%;
+        max-width: 950px;
+        color: #000;
+      }
+      paper-button {
+        background: #03A9F4;
+      }
+      #back {
+        margin: 2em;
+        align-self: flex-start;
+      }
+    </style>
+    <paper-card heading="Order: [[order.id]]">
+      <order-stages stages="[[_selectedStages]]"
+        order="[[order]]"></order-stages>
+      <section class="card-content">
+        <h2>Next Step:</h2>
+        <template is="dom-repeat"
+          as="option"
+          items="[[getOptions(_stageOptions, order)]]">
+          <paper-button
+            action$="[[option.value]]"
+            on-tap="_updateStatus">[[ option.title ]]</paper-button>
+        </template>
+      </section>
+    </paper-card>
+    <paper-button
+      id="back"
+      on-tap="_back">Back to scanner</paper-button>
+
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class OrderView extends Polymer.GestureEventListeners(Polymer.Element) {
+      getOptions(_stageOptions, order) {
+        try {
+          return _stageOptions[order.transport.status];
+        } catch (error) {
+          return [];
+        }
+      }
+      _back() {
+        this.dispatchEvent(new CustomEvent('back'));
+      }
+      _updateStatus(event) {
+        let state = event.target.getAttribute('action');
+        this.dispatchEvent(new CustomEvent('advance', { detail: {
+          state: state
+        }}));
+      }
+      static get is() { return 'order-view'; }
+      static get properties() {
+        return {
+          states: {
+            type: Array,
+            value: []
+          },
+          _stageOptions: {
+            type: Object,
+            value: {
+              "AWAITING_PICKUP": [{
+                title: "MARK ENROUTE",
+                value: "ENROUTE"
+              }],
+              "ENROUTE": [{
+                title: "MARK DELAYED",
+                value: "DELAYED"
+              },{
+                title: "MARK CANCELLED",
+                value: "CANCELLED"
+              },{
+                title: "MARK DELIVERED",
+                value: "DELIVERED"
+              },{
+                title: "MARK PART-DELIVERED",
+                value: "PARTIALLY_DELIVERED"
+              }]
+            }
+          },
+          _selectedStages: {
+            type: Array,
+            value: ["AWAITING_PICKUP", "ENROUTE", "DELIVERED", "DELIVERY_CONFIRMED"]
+          },
+          order: {
+            type: Object,
+            value: {}
+          }
+        };
+      }
+    }
+
+    window.customElements.define(OrderView.is, OrderView);
+  </script>
+</dom-module>
