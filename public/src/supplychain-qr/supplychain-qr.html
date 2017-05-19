@@ -1,7 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
-<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../qr-reader/qr-reader.html">
 <link rel="import" href="../order-view/order-view.html">
 <link rel="import" href="../mixins/blockchainApiMixin.html">
@@ -20,17 +18,13 @@
         height: 100%;
       }
     </style>
-    <app-header>
-      <app-toolbar>
-        <div main-title>MyOrders</div>
-      </app-toolbar>
-    </app-header>
     <template is="dom-if" if="{{!currentId}}">
       <qr-reader on-qrfound="_qrFound"></qr-reader>
     </template>
     <template is="dom-if" if="{{currentId}}">
       <order-view
         on-advance="_orderAdvanced"
+        on-back="_reset"
         order="[[_order]]"
         states="[[_states]]">
     </template>
@@ -54,6 +48,9 @@
             this._order = order;
           });
       }
+      _reset() {
+        this.currentId = null;
+      }
       _orderAdvanced(event) {
         this._updateOrderStatus(this.currentId, event.detail.state, "")
           .then(this.fetchOrder);
@@ -62,7 +59,7 @@
         return {
           currentId: {
             type: String,
-            value: "47b24ce7-ddc3-43f9-9738-a4c2f5e0fc54"
+            value: null
           }
         };
       }

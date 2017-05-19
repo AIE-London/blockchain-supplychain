@@ -12,7 +12,8 @@
         display: block;
         width: 100%;
         display: flex;
-        justify-content: center;
+        align-items: center;
+        flex-direction: column;
       }
       paper-card {
         width: 90%;
@@ -21,6 +22,10 @@
       }
       paper-button {
         background: #03A9F4;
+      }
+      #back {
+        margin: 2em;
+        align-self: flex-start;
       }
     </style>
     <paper-card heading="Order: [[order.id]]">
@@ -37,6 +42,10 @@
         </template>
       </section>
     </paper-card>
+    <paper-button
+      id="back"
+      on-tap="_back">Back to scanner</paper-button>
+
   </template>
 
   <script>
@@ -51,6 +60,9 @@
         } catch (error) {
           return [];
         }
+      }
+      _back() {
+        this.dispatchEvent(new CustomEvent('back'));
       }
       _updateStatus(event) {
         let state = event.target.getAttribute('action');
