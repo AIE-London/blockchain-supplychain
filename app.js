@@ -6,7 +6,7 @@ let app = express();
     Grab config
 */
 const config = require('./config.json');
-const swaggerDefinition =  require('./swaggerConfig.json');
+const swaggerDefinition = require('./swaggerConfig.json');
 
 /*
     Import utilities
@@ -14,6 +14,7 @@ const swaggerDefinition =  require('./swaggerConfig.json');
 const blockchain = require('./utils/blockchain-helpers.js');
 const schema = require('./utils/schema-helpers.js');
 const expressMiddleware = require('./utils/express-middleware.js');
+const date = require('./utils/date-helpers.js');
 
 /**
  * JSON Schema Validation
@@ -33,8 +34,8 @@ let swaggerJSDoc = require('swagger-jsdoc');
 
 // Options for the swagger docs
 let options = {
-  swaggerDefinition: swaggerDefinition,
-  apis: ['app.js'] // Self documenting within code
+    swaggerDefinition: swaggerDefinition,
+    apis: ['app.js'] // Self documenting within code
 };
 
 // Initialize Swagger-jsdoc
@@ -74,9 +75,9 @@ const transportStates = ["AWAITING_PICKUP", "ENROUTE", "DELAYED", "CANCELLED", "
 app.use(bodyParser.json());
 app.use(expressMiddleware.allowedOrigins);
 
-app.get('/swagger.json', function(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
+app.get('/swagger.json', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
 });
 
 /**
@@ -159,15 +160,15 @@ app.get('/orders', function (req, res) {
  *       503:
  *         description: Error invoking chaincode
  */
-app.post('/order', validate({ body : schemas.orderCreateSchema }), function (req, res) {
+app.post('/order', validate({ body: schemas.orderCreateSchema }), function (req, res) {
     console.log("[HTTP] Request inbound: POST /order");
     let order = req.body;
 
     let orderArguments = [order.destination.recipient,
-        order.destination.address,
-        order.source.location,
-        order.transport.company,
-        JSON.stringify({ items: order.items})
+    order.destination.address,
+    order.source.location,
+    order.transport.company,
+    JSON.stringify({ items: order.items })
     ];
 
     console.log("[INVOKE] Invoked addOrder on chaincode");
@@ -209,16 +210,32 @@ app.post('/order', validate({ body : schemas.orderCreateSchema }), function (req
 app.get('/order/:id', function (req, res) {
     console.log("[HTTP] Request inbound: GET /order/" + req.params.id);
     console.log("[QUERY] Querying getOrder on chaincode");
-    blockchain.query(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "getOrder", [req.params.id])
+    let order = {};
+    let orderRetrieval = blockchain.query(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "getOrder", [req.params.id])
         .then(json => {
-            console.log("[QUERY] Completed successfully");
-            res.send(JSON.parse(json.result.message));
-        })
-        .catch(error => {
-            console.log(error);
-            res.status(503);
-            res.send({ error: error.message });
+            console.log("[QUERY] Completed getOrder successfully");
+            order = Object.assign({}, order, JSON.parse(json.result.message));
         });
+    console.log("[QUERY] Querying getOrderHistory on chaincode");
+    let orderHistoryRetrieval = blockchain.query(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "getOrderHistory", [req.params.id])
+        .then(json => {
+            console.log("[QUERY] Completed getOrderHistory successfully");
+            let history = JSON.parse(json.result.message).orderUpdates.map(update => {
+                update.timestamp = date.parseBlockchainTimestamp(update.timestamp);
+                return update;
+            })
+            order = Object.assign({}, order, { history: history });
+        });
+
+    Promise.all([orderRetrieval, orderHistoryRetrieval]).then(() => {
+        console.log("[HTTP] Request outbound: GET /order/" + req.params.id);
+        res.send(order);
+    })
+    .catch(error => {
+        console.log(error);
+        res.status(503);
+        res.send({ error: error.message });
+    });
 });
 
 /**
@@ -250,7 +267,7 @@ app.get('/order/:id', function (req, res) {
  *       503:
  *         description: Error invoking chaincode
  */
-app.put('/order/:id/status', validate({ body : schemas.orderStatusUpdateSchema }), function (req, res) {
+app.put('/order/:id/status', validate({ body: schemas.orderStatusUpdateSchema }), function (req, res) {
     console.log("[HTTP] Request inbound: POST /order");
     let stateRequest = req.body;
 
@@ -261,8 +278,8 @@ app.put('/order/:id/status', validate({ body : schemas.orderStatusUpdateSchema }
 
     let orderArguments = [req.params.id,
         statusType,
-        stateRequest.to,
-        stateRequest.comment || ""];
+    stateRequest.to,
+    stateRequest.comment || ""];
 
     console.log("[INVOKE] Invoked updateOrderStatus on chaincode");
     blockchain.invoke(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "updateOrderStatus", orderArguments)
@@ -280,23 +297,23 @@ app.put('/order/:id/status', validate({ body : schemas.orderStatusUpdateSchema }
 
 // Express Error Handling for Validation
 app.use((err, req, res, next) => {
-  let responseData;
+    let responseData;
 
-  if (err.name === 'JsonSchemaValidation') {
+    if (err.name === 'JsonSchemaValidation') {
 
-    console.log("[HTTP] Request JSON schema validation failed.");
+        console.log("[HTTP] Request JSON schema validation failed.");
 
-    res.status(400);
+        res.status(400);
 
-    responseData = {
-        "error": "Bad Request",
-        "validationErrors": err.validations
-    };
+        responseData = {
+            "error": "Bad Request",
+            "validationErrors": err.validations
+        };
 
-    res.json(responseData);
-  } else {
-    next(err);
-  }
+        res.json(responseData);
+    } else {
+        next(err);
+    }
 });
 
 app.listen(port);

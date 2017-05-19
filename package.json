@@ -24,6 +24,7 @@
     "express-jsonschema": "^1.1.6",
     "hfc": "^0.6.5",
     "jsonfile": "^3.0.0",
+    "moment": "^2.18.1",
     "node-fetch": "^1.6.3",
     "swagger-jsdoc": "^1.9.4"
   }
