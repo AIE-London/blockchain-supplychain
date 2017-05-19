@@ -29,7 +29,10 @@
       <qr-reader on-qrfound="_qrFound"></qr-reader>
     </template>
     <template is="dom-if" if="{{currentId}}">
-      <order-view order="[[_order]]" states="[[_states]]">
+      <order-view
+        on-advance="_orderAdvanced"
+        order="[[_order]]"
+        states="[[_states]]">
     </template>
 
   </template>
@@ -50,6 +53,10 @@
           .then(order => {
             this._order = order;
           });
+      }
+      _orderAdvanced(event) {
+        this._updateOrderStatus(this.currentId, event.detail.state, "")
+          .then(this.fetchOrder);
       }
       static get properties() {
         return {

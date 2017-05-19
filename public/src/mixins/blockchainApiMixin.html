@@ -10,7 +10,7 @@
         .then(response => response.json())
     }
     _updateOrderStatus(orderId, to, comment) {
-      return fetch("/order/" + orderId, {
+      return fetch("/order/" + orderId + "/status", {
         method: "PUT",
         body: JSON.stringify({
           to,
