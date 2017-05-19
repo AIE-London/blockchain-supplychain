@@ -18,6 +18,22 @@
             ],
             "type": "object"
         },
+        "details": {
+            "additionalProperties": false,
+            "properties": {
+                "client": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "client",
+                "owner"
+            ],
+            "type": "object"
+        },
         "items": {
             "items": {
                 "additionalProperties": false,
