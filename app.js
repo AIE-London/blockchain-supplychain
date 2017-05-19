@@ -262,8 +262,7 @@ app.put('/order/:id/status', validate({ body : schemas.orderStatusUpdateSchema }
     let orderArguments = [req.params.id,
         statusType,
         stateRequest.to,
-        stateRequest.comment + ""];
-    console.log(orderArguments);
+        stateRequest.comment || ""];
 
     console.log("[INVOKE] Invoked updateOrderStatus on chaincode");
     blockchain.invoke(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "updateOrderStatus", orderArguments)
