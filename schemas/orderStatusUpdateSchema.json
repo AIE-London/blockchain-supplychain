@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "to": {
+      "type": "string",
+      "enum": [
+        "CREATED",
+        "PENDING",
+        "PICKED",
+        "PARTIALLY_PICKED",
+        "READY_FOR_TRANSIT", 
+        "AWAITING_PICKUP",
+        "ENROUTE", 
+        "DELAYED",
+        "CANCELLED",
+        "DELIVERED",
+        "PARTIALLY_DELIVERED",
+        "DELIVERY_CONFIRMED",
+        "FAILURE",
+        "REJECTED"
+      ]
+    },
+    "comment": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "to"
+  ],
+  "type": "object"
+}
