@@ -127,7 +127,23 @@ app.get('/orders', function (req, res) {
     blockchain.query(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "getAllOrders", [])
         .then(json => {
             console.log("[QUERY] Completed successfully");
-            res.send(JSON.parse(json.result.message).orders);
+            let orders = JSON.parse(json.result.message).orders
+            console.log("[QUERY] Querying getOrderHistory for orders");
+            let orderPromises = orders.map((order, index) => {
+                return blockchain.query(config.peers[0].endpoint, config.chaincodeHash, config.peers[0].user, "getOrderHistory", [order.id])
+                    .then(json => {
+                        let history = JSON.parse(json.result.message).orderUpdates.map(update => {
+                            update.timestamp = date.parseBlockchainTimestamp(update.timestamp);
+                            return update;
+                        })
+                        orders[index] = Object.assign({}, order, { history: history });
+                    });
+            });
+            return Promise.all(orderPromises).then(() => orders);
+        })
+        .then(orders => {
+            console.log("[QUERY] Querying complete on getOrderHistory for orders");
+            res.send(orders);
         })
         .catch(error => {
             console.log(error);
@@ -184,8 +200,6 @@ app.post('/order', validate({ body: schemas.orderCreateSchema }), function (req,
         });
 });
 
-
-
 /**
  * @swagger
  * /order/{orderId} :
@@ -231,11 +245,11 @@ app.get('/order/:id', function (req, res) {
         console.log("[HTTP] Request outbound: GET /order/" + req.params.id);
         res.send(order);
     })
-    .catch(error => {
-        console.log(error);
-        res.status(503);
-        res.send({ error: error.message });
-    });
+        .catch(error => {
+            console.log(error);
+            res.status(503);
+            res.send({ error: error.message });
+        });
 });
 
 /**
