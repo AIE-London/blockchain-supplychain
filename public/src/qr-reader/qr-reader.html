@@ -25,13 +25,16 @@
       ready() {
         super.ready();
         let video = this.$.preview;
-        let scanner = new Instascan.Scanner({ video:  video});
+        let scanner = new Instascan.Scanner({
+          mirror: false,
+          video:  video
+        });
         scanner.addListener('scan', content => {
           this.dispatchEvent(new CustomEvent('qrfound', {detail: {content: content}}));
         });
         Instascan.Camera.getCameras().then(cameras => {
           if (cameras.length > 0) {
-            scanner.start(cameras[0]);
+            scanner.start(cameras[cameras.length - 1]);
           } else {
             console.error('No cameras found.');
           }
