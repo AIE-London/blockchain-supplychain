@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../qr-reader/qr-reader.html">
 <link rel="import" href="../order-view/order-view.html">
+<link rel="import" href="../login-view/login-view.html">
 <link rel="import" href="../mixins/blockchainApiMixin.html">
 
 <dom-module id="supplychain-qr">
@@ -18,15 +19,21 @@
         height: 100%;
       }
     </style>
-    <template is="dom-if" if="{{!currentId}}">
-      <qr-reader on-qrfound="_qrFound"></qr-reader>
+    <template is="dom-if" if="{{!currentUser}}">
+      <login-view on-login="_loggedIn"></login-view>
     </template>
-    <template is="dom-if" if="{{currentId}}">
-      <order-view
-        on-advance="_orderAdvanced"
-        on-back="_reset"
-        order="[[_order]]"
-        states="[[_states]]">
+    <template is="dom-if" if="{{currentUser}}">
+      <template is="dom-if" if="{{!currentId}}">
+        <qr-reader on-qrfound="_qrFound"></qr-reader>
+      </template>
+      <template is="dom-if" if="{{currentId}}">
+        <order-view
+          on-advance="_orderAdvanced"
+          on-back="_reset"
+          order="[[_order]]"
+          states="[[_states]]"
+          current-user="[[currentUser]]">
+      </template>
     </template>
 
   </template>
@@ -38,6 +45,31 @@
      */
     class SupplychainQr extends ApiMixin(Polymer.Element) {
       static get is() { return 'supplychain-qr'; }
+      static get properties() {
+        return {
+          currentId: {
+            type: String,
+            value: null
+          },
+          _userOptions: {
+            type: Array,
+            value: ["LOGISTICS", "RECIPIENT"]
+          },
+          currentUser: {
+            type: String,
+            value: null
+          }
+        };
+      }
+      ready() {
+        super.ready();
+        this._getStates()
+          .then(states => this._states = states)
+          .then(() => console.log(this._states));
+      }
+      _loggedIn(event) {
+        this.currentUser = event.detail.username;
+      }
       _qrFound(event) {
         this.currentId = event.detail.content;
         this._fetchOrder();
@@ -54,21 +86,6 @@
       _orderAdvanced(event) {
         this._updateOrderStatus(this.currentId, event.detail.state, "")
           .then(this.fetchOrder);
-      }
-      static get properties() {
-        return {
-          currentId: {
-            type: String,
-            value: null
-          }
-        };
-      }
-      ready() {
-        super.ready();
-        this._getStates()
-          .then(states => this._states = states)
-          .then(() => console.log(this._states));
-        this._fetchOrder();
       }
     }
 
