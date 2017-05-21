@@ -25,7 +25,10 @@
       ready() {
         super.ready();
         let video = this.$.preview;
-        let scanner = new Instascan.Scanner({ video:  video});
+        let scanner = new Instascan.Scanner({
+          mirror: false,
+          video:  video
+        });
         scanner.addListener('scan', content => {
           this.dispatchEvent(new CustomEvent('qrfound', {detail: {content: content}}));
         });
