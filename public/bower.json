@@ -6,7 +6,8 @@
     "polymer": "Polymer/polymer#^2.0.0",
     "paper-card": "PolymerElements/paper-card#2.0.0",
     "paper-button": "PolymerElements/paper-button#2.0.0",
-    "sign-here": "CaptainCodeman/sign-here#^0.0.1"
+    "sign-here": "CaptainCodeman/sign-here#^0.0.1",
+    "signature_pad": "1.5.3"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
@@ -14,6 +15,7 @@
   },
   "resolutions": {
     "polymer": "^2.0.0",
-    "webcomponentsjs": "^1.0.0"
+    "webcomponentsjs": "^1.0.0",
+    "signature_pad": "1.5.3"
   }
 }
