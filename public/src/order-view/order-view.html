@@ -2,7 +2,9 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../../bower_components/sign-here/sign-here.html">
 <link rel="import" href="../order-stages/order-stages.html">
 
 <dom-module id="order-view">
@@ -27,18 +29,48 @@
         margin: 2em;
         align-self: flex-start;
       }
+      sign-here {
+        border-bottom: rgba(0,0,0,0.5) solid 1px;
+        margin-bottom: 3em;
+        width: 400px;
+      }
     </style>
     <paper-card heading="Order: [[order.id]]">
       <order-stages stages="[[_selectedStages]]"
         order="[[order]]"></order-stages>
       <section class="card-content">
         <h2>Next Step:</h2>
+        <template is="dom-if" if="[[_deliveryConfirmed(order)]]">
+          <p>Delivered by company and confirmed.</h2>
+        </template>
         <template is="dom-repeat"
           as="option"
-          items="[[getOptions(_stageOptions, order)]]">
+          items="[[getOptions(_stageOptions, order, currentUser)]]">
           <paper-button
             action$="[[option.value]]"
             on-tap="_updateStatus">[[ option.title ]]</paper-button>
+        </template>
+        <template is="dom-if" if="[[_recipientLoggedIn(currentUser)]]">
+          <template is="dom-if" if="[[!_deliveryComplete(order)]]">
+            <template is="dom-if" if="[[!_deliveryConfirmed(order)]]">
+              <p>Awaiting delivery by logistics company: [[order.transport.company]]</h2>
+            </template>
+            <template is="dom-if" if="[[_deliveryConfirmed(order)]]">
+              <p>Delivered by company: [[order.transport.company]] and confirmed.</h2>
+            </template>
+          </template>
+          <template is="dom-if" if="[[_deliveryComplete(order)]]">
+            <p>Sign to confirm successful delivery</p>
+            <sign-here
+              width="400"
+              height="200"
+              image="{{image}}"></sign-here>
+            <template is="dom-if" if="[[image]]">
+              <paper-button
+                action="DELIVERY_CONFIRMED"
+                on-tap="_updateStatus">Confirm Delivery</paper-button>
+            </template>
+          </template>
         </template>
       </section>
     </paper-card>
@@ -54,28 +86,16 @@
      * @polymer
      */
     class OrderView extends Polymer.GestureEventListeners(Polymer.Element) {
-      getOptions(_stageOptions, order) {
-        try {
-          return _stageOptions[order.transport.status];
-        } catch (error) {
-          return [];
-        }
-      }
-      _back() {
-        this.dispatchEvent(new CustomEvent('back'));
-      }
-      _updateStatus(event) {
-        let state = event.target.getAttribute('action');
-        this.dispatchEvent(new CustomEvent('advance', { detail: {
-          state: state
-        }}));
-      }
       static get is() { return 'order-view'; }
       static get properties() {
         return {
           states: {
             type: Array,
             value: []
+          },
+          _deliveryTBC: {
+            type: Boolean,
+            value: false
           },
           _stageOptions: {
             type: Object,
@@ -108,6 +128,35 @@
             value: {}
           }
         };
+      }
+      getOptions(_stageOptions, order, currentUser) {
+        if (currentUser === "RECIPIENT") {
+          return [];
+        }
+        try {
+          return _stageOptions[order.transport.status];
+        } catch (error) {
+          return [];
+        }
+      }
+      _back() {
+        console.log(this.image);
+        this.dispatchEvent(new CustomEvent('back'));
+      }
+      _updateStatus(event) {
+        let state = event.target.getAttribute('action');
+        this.dispatchEvent(new CustomEvent('advance', { detail: {
+          state: state
+        }}));
+      }
+      _recipientLoggedIn(currentUser) {
+        return currentUser === "RECIPIENT";
+      }
+      _deliveryComplete(order) {
+        return order && order.transport && (order.transport.status === "DELIVERED" || order.transport.status === "PART_DELIVERED");
+      }
+      _deliveryConfirmed(order) {
+        return order && order.transport && order.transport.status === "DELIVERY_CONFIRMED";
       }
     }
 

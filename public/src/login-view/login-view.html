@@ -1,0 +1,80 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../order-stages/order-stages.html">
+
+<dom-module id="login-view">
+  <template>
+    <style>
+       :host {
+        display: block;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        padding-top: 4em;
+      }
+
+      paper-card {
+        width: 90%;
+        max-width: 950px;
+        color: #000;
+      }
+
+      h2 {
+        opacity: 0.75;
+        font-size: 1.25em;
+        margin: 0;
+      }
+
+      .card-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      paper-button {
+        background: #03A9F4;
+        color: #fff;
+        width: 15em;
+        margin: 2em 0;
+      }
+    </style>
+    <paper-card heading="Please choose your user account">
+      <div class="card-content">
+        <paper-button raised on-tap="_fireLogistics">LOGISTICS</paper-button>
+        <paper-button raised on-tap="_fireRecipient">RECIPIENT</paper-button>
+      </div>
+    </paper-card>
+
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class LoginView extends Polymer.GestureEventListeners(Polymer.Element) {
+      static get is() { return 'login-view'; }
+      _fireRecipient() {
+        this.dispatchEvent(new CustomEvent('login', {
+          detail: {
+            username: "RECIPIENT"
+          }
+        }));
+      }
+      _fireLogistics() {
+        this.dispatchEvent(new CustomEvent('login', {
+          detail: {
+            username: "LOGISTICS"
+          }
+        }));
+      }
+    }
+
+    window.customElements.define(LoginView.is, LoginView);
+  </script>
+</dom-module>
