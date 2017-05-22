@@ -1,4 +1,4 @@
-const allowedOrigins = ["blockchain-supplychain-webapp.eu-gb.mybluemix.net/",
+const allowedOrigins = ["blockchain-supplychain-webapp.eu-gb.mybluemix.net",
   "aston-swagger-ui.eu-gb.mybluemix.net"];
 
 let allowedOriginsMiddleware = (req, res, next) => {
