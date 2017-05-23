@@ -72,22 +72,28 @@ func (t *SupplychainChaincode) Query(stub shim.ChaincodeStubInterface, function 
 //          args -  Recipient,
 //                  Address,
 //                  SourceWarehouse,
-//                  DeliveryCompany
-//                  Items
+//                  DeliveryCompany,
+//                  Items,
+//                  Client,
+//                  Owner,
+//                  Timestamp
 //=================================================================================================================================
 func (t *SupplychainChaincode) processAddOrder(stub shim.ChaincodeStubInterface, callerDetails CallerDetails, args[]string) ([]byte, error) {
 
     fmt.Println("running processAddOrder)")
 
-    if len(args) != 5 {
-        return nil, errors.New("Incorrect number of arguments. Expecting (Recipient, Address, SourceWarehouse, DeliveryCompany, Items)")
+    if len(args) != 7 {
+        return nil, errors.New("Incorrect number of arguments. Expecting (Recipient, Address, SourceWarehouse, DeliveryCompany, Items, Client, Owner)")
     }
 
     items, err := MarshallItems(args[4])
 
     if err != nil { return nil, LogAndError("Invalid items: " + args[4] + ", error: " + err.Error()) }
 
-    order := NewOrder(stub.GetTxID(), args[0], args[1], args[2], args[3], items)
+    timestamp, err := stub.GetTxTimestamp()
+    if err != nil { return nil, LogAndError(err.Error()) }
+
+    order := NewOrder(stub.GetTxID(), args[0], args[1], args[2], args[3], items, args[5], args[6], timestamp.String())
 
     return nil, AddOrder(stub, callerDetails, order)
 }

@@ -9,6 +9,7 @@ type Order struct {
     Destination	        Destination	`json:"destination"`
     Transport           Transport   `json:"transport"`
     Items               []Item      `json:"items"`
+    Details             Details     `json:"details"`
 }
 
 type Orders struct {
@@ -31,6 +32,12 @@ type Transport struct {
     Status              string      `json:"status"`
 }
 
+type Details struct {
+    Client              string      `json:"client"`
+    Owner               string      `json:"owner"`
+    Timestamp           string      `json:"timestamp"`
+}
+
 const PICK_STATUS_PENDING = "PENDING"
 const PICK_STATUS_PICKED = "PICKED"
 const PICK_STATUS_PARTIALLY_PICKED = "PARTIALLY_PICKED"
@@ -43,7 +50,7 @@ const DELIVERY_STATUS_FAILURE = "FAILURE"
 const DELIVERY_STATUS_REJECTED = "REJECTED"
 
 
-func NewOrder(id string, recipient string, address string, sourceLocation string, deliveryCompany string, items Items) (Order){
+func NewOrder(id string, recipient string, address string, sourceLocation string, deliveryCompany string, items Items, client string, owner string, timestamp string) (Order){
     var order Order
 
     order.Id = id
@@ -52,6 +59,7 @@ func NewOrder(id string, recipient string, address string, sourceLocation string
     order.Destination = Destination{recipient, address}
     order.Transport = Transport{deliveryCompany, DELIVERY_STATUS_AWAITING_PICKUP}
     order.Items = items.Items
+    order.Details = Details{client, owner, timestamp}
 
     return order
 }
