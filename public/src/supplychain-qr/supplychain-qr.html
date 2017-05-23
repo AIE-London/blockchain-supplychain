@@ -66,6 +66,11 @@
         this._getStates()
           .then(states => this._states = states)
           .then(() => console.log(this._states));
+        setInterval(() => {
+          if (this.currentId) {
+            this._fetchOrder();
+          } 
+        }, 500);
       }
       _loggedIn(event) {
         this.currentUser = event.detail.username;
