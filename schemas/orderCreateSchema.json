@@ -84,6 +84,7 @@
         }
     },
     "required": [
+        "detail",
         "source",
         "destination",
         "transport",
