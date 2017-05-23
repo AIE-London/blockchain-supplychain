@@ -18,7 +18,7 @@
             ],
             "type": "object"
         },
-        "details": {
+        "detail": {
             "additionalProperties": false,
             "properties": {
                 "client": {
@@ -84,6 +84,7 @@
         }
     },
     "required": [
+        "detail",
         "source",
         "destination",
         "transport",
