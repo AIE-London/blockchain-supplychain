@@ -1,5 +1,5 @@
 const allowedOrigins = ["blockchain-supplychain-webapp.eu-gb.mybluemix.net",
-  "aston-swagger-ui.eu-gb.mybluemix.net"];
+  "aston-swagger-ui.eu-gb.mybluemix.net", "localhost:3000"];
 
 let allowedOriginsMiddleware = (req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
