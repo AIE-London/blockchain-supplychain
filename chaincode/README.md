@@ -7,6 +7,8 @@
 * SourceWarehouse - String
 * DeliveryCompany - String
 * Items - JSON {"items" : [{"code" : "123", "description": "Some item"}]}
+* Client - String
+* Owner - String
 #### Sample Curl Command
 `curl -H "Content-Type: application/json" -X POST -d '{
      "jsonrpc": "2.0",
@@ -19,11 +21,13 @@
          "ctorMsg": {
              "function": "addOrder",
              "args": [
-                 "Joe Bloggs",
-                 "10 Downing Street",
-                 "Cardiff",
-                 "DPD",
-                 "{\"items\": [{\"code\": \"123\", \"description\": \"Hydrochloric Acid\"}]}"
+                 "Test Owner",
+                 "40 Holborn Viaduct",
+                 "Woking warehouse",
+                 "DHL",
+                 "{\"items\": [{\"code\": \"123\", \"description\": \"Dove soap\"}]}",
+                 "Tesco",
+                 "Tutu"
              ]
          },
          "secureContext": "system",
